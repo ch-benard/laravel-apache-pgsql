@@ -1,0 +1,50 @@
+version: '3.7'
+
+services:
+
+  # PHP Service
+  php:
+    build: './php/'
+    container_name: laravel-php
+    networks:
+      - backend
+    volumes:
+      - ./public_html:/var/www/html
+      - ./apache2/log:/var/log/apache2
+
+  # Apache Service
+  apache:
+    build: './apache2/'
+    container_name: laravel-apache
+    depends_on:
+      - php
+      - pgsql
+    networks:
+      - frontend
+      - backend
+    ports:
+      - "8080:80"
+      - "443:443"
+    volumes:
+      - ./public_html:/var/www/html
+      - ./apache2/log:/var/log/apache2
+
+  #PostgreSQL Service
+  pgsql:
+    image: postgres:12.0-alpine
+    container_name: laravel-pgsql
+    working_dir: /data/pgsql
+    volumes:
+    - ./postgresql-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: pguser
+      POSTGRES_PASSWORD: pgpwd
+      POSTGRES_DB: pgdb
+    ports:
+      - 5432:5432
+    networks:
+      - backend
+
+networks:
+  frontend:
+  backend:
