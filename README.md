@@ -22,16 +22,17 @@ mkdir postgresql-data public_html
 ```
 
 3. Update your php **Dockerfile**
-Once Docker is lauched, you'll be able to write your own files into your local public_html folder. This folder is mapped to the /var/www/html folder on the php container.
-Every modification update the web application which is running on your docker stack. So you can immediatly see the effect of your file updates. The trick is to use the same UID (UserIDentification) on the local computer (the dev station) and the container, in order to preserve the rights on the filesystem on both side.
-To do this, I added a line in the php Dockerfile to create a user on the php container who owns the files into the /var/www/html folder. This user is a member of the www-data group on the container side.
 
-In order to get your uid on the host machine by typing "id -u" on your host. Then replace the 1000 value by your own uid on this line :
+Once Docker is lauched, you'll be able to write your own files into your local **public_html** folder. This folder is mapped to the **/var/www/html** folder on the php container.
+Every modification updates the web application which is running on your docker stack. So you can immediatly see the effect of your modifications. In order to edit the files on your host (your dev station) and to apply the code modifications to the app that is running in your Docker stack, the trick is to use the same UID (UserIDentification) on the local computer (the dev station) and the container, in order to preserve the rights on the filesystems on both side.
+To do this, I added a line in the php Dockerfile to create a user **devuser** on the php container who owns the files from the **/var/www/html** folder. This user is a member of the **www-data** group on the container side.
+
+In order to get your uid on the host machine by typing "id -u" on your host. Then replace the **1000** value by your own uid on this line :
 ```
 RUN adduser --uid 1000 --disabled-password --home /home/devuser devuser
 ```
 
-4. Start docker containers
+4. Start Docker containers
 
 ```bash
 cd [location where you cloned the project]/laravel-apache2-pgsql
