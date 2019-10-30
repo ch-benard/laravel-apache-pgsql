@@ -40,12 +40,15 @@ docker-compose build && docker-compose up -d
 ```
 
 5. Create the the laravel project skeleton
-(inside laravel-apache2-pgsql folder)
+
+From the *laravel-apache2-pgsql* folder, type this command :
+
 ```bash
 docker-compose exec -u devuser php composer create-project --prefer-dist laravel/laravel /var/www/html/.
 ```
 
 6. Generate the key for the Laravel application
+
 Next, set the application key for the Laravel application with this command :
 
 ```bash
@@ -55,6 +58,7 @@ docker-compose exec -u devuser php php artisan key:generate
 This command will generate a key and copy it to your .env file, ensuring that your user sessions and encrypted data remain secure.
 
 7. Sync de database.
+
 Finally, to sync the database, you need to update the .env file. An exemple is shown below :
 
 ```
