@@ -46,9 +46,13 @@ docker-compose exec -u devuser php composer create-project --prefer-dist laravel
 ```
 
 6. Generate the key for the Laravel application
-Next, set the application key for the Laravel application with the php artisan key:generate command. This command will generate a key and copy it to your .env file, ensuring that your user sessions and encrypted data remain secure:
+Next, set the application key for the Laravel application with this command :
 
+```bash
 docker-compose exec -u devuser php php artisan key:generate
+```
+
+This command will generate a key and copy it to your .env file, ensuring that your user sessions and encrypted data remain secure.
 
 7. Sync de database.
 Finally, to sync the database, you need to update the .env file. An exemple is shown below :
@@ -67,6 +71,14 @@ Now, type the following URL. The port is the one we set up in the docker-compose
 http://localhost:8080
 
 You can connect an external database client such as pgadmin or dbeaver.
+
+8. Use Laravel *artisan* command to create a controller:
+
+```bash
+docker-compose exec -u devuser php php artisan make:controller SomeController
+```
+
+This command will create the *SomeController* file into the */var/www/html/app/Http/Controllers* container directory.
 
 ## Docker compose cheatsheet
 
