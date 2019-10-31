@@ -6,7 +6,7 @@ Docker environment for a Laravel project with Apache2, PHP 7.3 and Postgresql 12
 
 To use this stack, you need a recent version of git, docker and docker-compose that works on your computer. There are a lot of tutorial on the internet that can help you installing git, docker and docker-compose. I personally have these tools running on my PC that runs Ubuntu 18.04 and on my laptop with CloudReady, a nice ChromeOS fork.
 
-## How to create a Laravel project from scratch with LARAVEL-APACHE2-PGSQL ?
+## How to create the Laravel/Apache2/PHP 7.3 Docker stack ?
 
 1. Clone the laravel-apache2-pgsql repository
 
@@ -39,7 +39,9 @@ cd [location where you cloned the project]/laravel-apache2-pgsql
 docker-compose build && docker-compose up -d
 ```
 
-5. Create the the laravel project skeleton
+## Using Laravel 
+
+1. Create the the laravel project skeleton
 
 From the *laravel-apache2-pgsql* folder, type this command :
 
@@ -47,7 +49,7 @@ From the *laravel-apache2-pgsql* folder, type this command :
 docker-compose exec -u devuser php composer create-project --prefer-dist laravel/laravel /var/www/html/.
 ```
 
-6. Generate the key for the Laravel application
+2. Generate the key for the Laravel application
 
 Next, set the application key for the Laravel application with this command :
 
@@ -57,7 +59,7 @@ docker-compose exec -u devuser php php artisan key:generate
 
 This command will generate a key and copy it to your .env file, ensuring that your user sessions and encrypted data remain secure.
 
-7. Sync de database.
+3. Sync de database.
 
 Finally, to sync the database, you need to update the .env file. An exemple is shown below :
 
@@ -76,13 +78,13 @@ http://localhost:8080
 
 You can connect an external database client such as pgadmin or dbeaver.
 
-8. Use Laravel *artisan* command to create a controller:
+4. Use Laravel *artisan* command to create a controller:
 
 ```bash
 docker-compose exec -u devuser php php artisan make:controller SomeController
 ```
 
-This command will create the *SomeController* file into the */var/www/html/app/Http/Controllers* container directory.
+This command will create the *SomeController.php* file into the */var/www/html/app/Http/Controllers* container directory.
 
 ## Docker compose cheatsheet
 
