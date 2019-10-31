@@ -39,7 +39,7 @@ cd [location where you cloned the project]/laravel-apache2-pgsql
 docker-compose build && docker-compose up -d
 ```
 
-## Using Laravel 
+## How to create a project from scratch with LARAVEL-APACHE2-PGSQL ?
 
 1. Create the the laravel project skeleton
 
@@ -48,6 +48,7 @@ From the *laravel-apache2-pgsql* folder, type this command :
 ```bash
 docker-compose exec -u devuser php composer create-project --prefer-dist laravel/laravel /var/www/html/.
 ```
+The command will create a Laravel project into the */var/www/html* folder in the container. This container is mapped to *public_html* folder on the host. The command is launched from the container to avoid having to install the development tools (Composer, Laravel) on the host. So, you keep your host clean.
 
 2. Generate the key for the Laravel application
 
