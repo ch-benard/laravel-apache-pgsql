@@ -48,7 +48,7 @@ From the *laravel-apache2-pgsql* folder, type this command :
 ```bash
 docker-compose exec -u devuser php composer create-project --prefer-dist laravel/laravel /var/www/html/.
 ```
-The command will create a Laravel project into the */var/www/html* folder in the container. This container is mapped to *public_html* folder on the host. The command is launched from the container to avoid having to install the development tools (Composer, Laravel) on the host. So, you keep your host clean.
+The command will create a Laravel project into the */var/www/html* folder in the container. This directory is mapped to the *public_html* folder on the host. The command is launched from the container to avoid having to install the development tools (Composer, Laravel) on the host. So, you keep your host clean.
 
 2. Generate the key for the Laravel application
 
@@ -97,9 +97,9 @@ This command will create the *SomeController.php* file into the */var/www/html/a
 * Kill containers: `docker-compose kill`
 * View container logs: `docker-compose logs`
 * Execute command inside of container: `docker-compose exec SERVICE_NAME COMMAND` where `COMMAND` is whatever you want to run. Examples:
-
 * Open a pgsql shell, `docker-compose exec -u postgres pgsql bash`
-Then you can access the database with psql commad :
+
+Then you can access the database with psql command :
 * `psql -U pguser -d pgdb -W`
 
 ## Docker general cheatsheet
