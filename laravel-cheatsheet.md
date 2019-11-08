@@ -741,5 +741,17 @@ use App\SomeTables
 We can now type the class name without the namespace:
 
 ```php
+    public function index()
+    {
+        dd(SomeTables::all());
+    }
+```
 
+...
+
+```php
+    public function show($id)
+    {
+        dd(SomeTables::find($id));
+    }
 ```
