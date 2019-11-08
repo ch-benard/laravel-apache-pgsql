@@ -1,6 +1,6 @@
-# Laravel cheatsheet
+# LARAVEL CHEATSHEET
 
-## Using Migration to create and alter tables
+## USING MIGRATION TO CREATE AND ALTER TABLES
 
 You can use Laravel migration tool to create a table :
 
@@ -106,7 +106,7 @@ To execute the script, use the command below :
 docker-compose exec -u devuser php php artisan migrate
 ```
 
-## Using Eloquent to interact with the database
+## USING ELOQUENT TO INTERACT WITH THE DATABASE
 
 Eloquent is Laravel ORM (Object Relationship Mapping), which makes a PHP class correspond to a table.
 
@@ -220,7 +220,7 @@ Don't forget to apply the changes by executing the *artisan migrate* command :
 docker-compose exec -u devuser php php artisan migrate
 ```
 
-## Playing with the model using **Tinker** :
+## PLAYING WITH THE MODEL USING **TINKER** :
 
 ### Reading all the records of a table using Tinker
 
@@ -472,14 +472,274 @@ Result :
          content: "My Content",
        },
      ],
-   }
+   }👏
 ```
 
-We can chain the methods. For example if the *where* clause returns more than one record, we can chain *first()* with *where()* :
+We c👏here* clause returns more than one record, we can chain *first()* with *where()* :
 
 
 ```
 App\SomeTables::where('title', 'My Title')->get()->first();
 ```
 
-which results in the same as the previous query as we only have one record with the *My Title* value in the *title* field.
+which results in the same as the previous query as we only have one record with the *My Title* value in the *title*.
+
+## USING LARAVEL RESOURCE CONTROLLER
+
+When you want to publish a list on a page and permit the user to click on a line of this list to display the detail of an item for exemple, you can use a table to store the items and then use Laravel Resource Controller to help you generate the links to the detail pages.
+
+Let's take the example of a shop : you can manage a table which contains all the items to sell. It could be an idea to display the list on a page and each line could be a link to the detail page of an item.
+
+Let's build the Laravel Resource Controller to do this. We will create a single controller to handle all the possible routes we might be using for :
+
+- displaying all the items
+- adding an item
+- storing an item
+- displaying the detail of an item
+- editing an iem
+- modifying an existing item and saving the changes
+- deleting an item
+
+### Creating a LAravel Resource Controller
+
+To generate such controller, Laravel provides a command :
+
+```bash
+php artisan make:controller NameOfTheController --resource
+```
+
+This will generate a controller class named *NameOfTheController* containing all the required methods to do the above listed actions.
+
+Let's create an *ItemController* to use the item contained into ouor *some_tables* table.
+
+```bash
+docker-compose exec -u devuser php php artisan make:controller ItemController --resource
+```
+
+This results in the creation of the Controller Class, containing the following methods :
+
+- index
+- create
+- store
+- show
+- edit
+- update
+- destroy
+
+### Adding the routes into the web.php route controller
+
+Just add the line above to the web.php file :
+
+```php
+Route::resource('/item', 'ItemController');
+```
+
+Let's check the routes list :
+
+```bash
+$ docker-compose exec -u devuser php php artisan route:list
++--------+-----------+-------------------+---------------+---------------------------------------------+--------------+
+| Domain | Method    | URI               | Name          | Action                                      | Middleware   |
++--------+-----------+-------------------+---------------+---------------------------------------------+--------------+
+|        | GET|HEAD  | /                 | home          | App\Http\Controllers\HomeController@home    | web          |
+|        | GET|HEAD  | api/user          |               | Closure                                     | api,auth:api |
+|        | GET|HEAD  | contact           | contact       | App\Http\Controllers\HomeController@contact | web          |
+|        | GET|HEAD  | posts             | posts.index   | App\Http\Controllers\PostController@index   | web          |
+|        | POST      | posts             | posts.store   | App\Http\Controllers\PostController@store   | web          |
+|        | GET|HEAD  | posts/create      | posts.create  | App\Http\Controllers\PostController@create  | web          |
+|        | GET|HEAD  | posts/{post}      | posts.show    | App\Http\Controllers\PostController@show    | web          |
+|        | PUT|PATCH | posts/{post}      | posts.update  | App\Http\Controllers\PostController@update  | web          |
+|        | DELETE    | posts/{post}      | posts.destroy | App\Http\Controllers\PostController@destroy | web          |
+|        | GET|HEAD  | posts/{post}/edit | posts.edit    | App\Http\Controllers\PostController@edit    | web          |
++--------+-----------+-------------------+---------------+---------------------------------------------+--------------+
+```
+
+- The *index* will display the list of items.
+- The *store* method will save the informatiopn about the item in the table
+- The *create* method will display a form in order to create a new item
+- The *show* method will display an individual item
+- The *update* method will save the changes
+- The *destroy* will delete the item from the table
+- The *edit* will display a form to edit an existing item
+
+**Urls** and **actions** are generated out of the box in the controller class.
+
+### How to limit the methods of a Resource Controller
+
+If you don't want to use all the methods generated, you can limit their use by using the *only()* method in the *web.php* route class. The authorized methods are specified in an array as a parameter :
+
+```pĥp
+Route::resource('/item', 'ItemController')->only(['index', 'show']);
+```
+
+The *route:list* Laravel artisan command now returns :
+
+```bash
+$ docker-compose exec -u devuser php php artisan route:list
++--------+----------+-------------+------------+---------------------------------------------+--------------+
+| Domain | Method   | URI         | Name       | Action                                      | Middleware   |
++--------+----------+-------------+------------+---------------------------------------------+--------------+
+|        | GET|HEAD | /           | home       | App\Http\Controllers\HomeController@home    | web          |
+|        | GET|HEAD | api/user    |            | Closure                                     | api,auth:api |
+|        | GET|HEAD | contact     | contact    | App\Http\Controllers\HomeController@contact | web          |
+|        | GET|HEAD | item        | item.index | App\Http\Controllers\ItemController@index   | web          |
+|        | GET|HEAD | item/{item} | item.show  | App\Http\Controllers\ItemController@show    | web          |
++--------+----------+-------------+------------+---------------------------------------------+--------------+
+```
+
+We can now implement the *index()* method to display the item list using the *SomeTable Model*:
+
+```php
+    public function index()
+    {
+       dd(\App\SomeTables::all());
+    }
+```
+
+As we don't have a view to handle the list yet, we just use the **dd** (dump & die) method that just displays the content passed to it (the items) and die.
+
+If we connect to the application url specifying the controller name, we get :
+
+```json
+http://127.0.0.1:8080/item
+
+Collection {#259 ▼
+  #items: array:2 [▼
+    0 => SomeTables {#260 ▼
+      #connection: "pgsql"
+      #table: "some_tables"
+      #primaryKey: "id"
+      #keyType: "int"
+      +incrementing: true
+      #with: []
+      #withCount: []
+      #perPage: 15
+      +exists: true
+      +wasRecentlyCreated: false
+      #attributes: array:5 [▼
+        "id" => 1
+        "created_at" => "2019-11-05 12:23:00"
+        "updated_at" => "2019-11-05 12:23:00"
+        "title" => "My Title"
+        "content" => "My Content"
+      ]
+      #original: array:5 [▶]
+      #changes: []
+      #casts: []
+      #dates: []
+      #dateFormat: null
+      #appends: []
+      #dispatchesEvents: []
+      #observables: []
+      #relations: []
+      #touches: []
+      +timestamps: true
+      #hidden: []
+      #visible: []
+      #fillable: []
+      #guarded: array:1 [▼
+        0 => "*"
+      ]
+    }
+    1 => SomeTables {#261 ▼
+      #connection: "pgsql"
+      #table: "some_tables"
+      #primaryKey: "id"
+      #keyType: "int"
+      +incrementing: true
+      #with: []
+      #withCount: []
+      #perPage: 15
+      +exists: true
+      +wasRecentlyCreated: false
+      #attributes: array:5 [▶]
+      #original: array:5 [▼
+        "id" => 2
+        "created_at" => "2019-11-05 16:14:39"
+        "updated_at" => "2019-11-05 16:14:39"
+        "title" => "Third Title"
+        "content" => "Another Content"
+      ]
+      #changes: []
+      #casts: []
+      #dates: []
+      #dateFormat: null
+      #appends: []
+      #dispatchesEvents: []
+      #observables: []
+      #relations: []
+      #touches: []
+      +timestamps: true
+      #hidden: []
+      #visible: []
+      #fillable: []
+      #guarded: array:1 [▶]
+    }
+  ]
+}
+```
+The 2 records of the *some_table* table are shown in each *attributes* section of the resulting page.
+
+Let's now implement the *show()* method of the controller :
+
+```php
+    public function show($id)
+    {
+        dd(\App\SomeTables::find($id));
+    }
+```
+
+If we now call the application url specifying the controller name and the id of a record (1 for example), we get :
+
+```json
+SomeTables {#259 ▼
+  #connection: "pgsql"
+  #table: "some_tables"
+  #primaryKey: "id"
+  #keyType: "int"
+  +incrementing: true
+  #with: []
+  #withCount: []
+  #perPage: 15
+  +exists: true
+  +wasRecentlyCreated: false
+  #attributes: array:5 [▼
+    "id" => 1
+    "created_at" => "2019-11-05 12:23:00"
+    "updated_at" => "2019-11-05 12:23:00"
+    "title" => "My Title"
+    "content" => "My Content"
+  ]
+  #original: array:5 [▶]
+  #changes: []
+  #casts: []
+  #dates: []
+  #dateFormat: null
+  #appends: []
+  #dispatchesEvents: []
+  #observables: []
+  #relations: []
+  #touches: []
+  +timestamps: true
+  #hidden: []
+  #visible: []
+  #fillable: []
+  #guarded: array:1 [▶]
+}
+```
+
+The record is detailed in the *attributes* section of the resulting page.
+
+We have to write the namespace *App* each time we want to call the *SomeTables*, which is not really convenient. It could be cumbersome if the namespace is longer. To avoid having to type the namespace, we can import the class using the *use* statement just after the namespace:
+
+```php
+namespace App\Http\Controllers;
+ 
+use App\SomeTables
+```
+
+We can now type the class name without the namespace:
+
+```php
+
+```
